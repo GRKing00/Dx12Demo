@@ -3,12 +3,15 @@
 #include<d3d12.h>		
 #include<dxgi1_6.h>	
 #include<DirectXColors.h>
+#include<DirectXMath.h>
+#include<d3dcompiler.h>	
 
 #include<wrl.h>			// π”√ComPtr
 
 #pragma comment(lib,"d3d12.lib")	
 #pragma comment(lib,"dxgi.lib")		
 #pragma comment(lib,"dxguid.lib")	
+#pragma comment(lib,"d3dcompiler.lib")
 
 using namespace Microsoft;
 using namespace Microsoft::WRL;
@@ -48,7 +51,18 @@ private:
 	D3D12_RESOURCE_BARRIER end_barrier = {};			
 
 	ComPtr<ID3D12RootSignature> m_RootSignature;		
-	ComPtr<ID3D12PipelineState> m_PipelineStateObject;	
+	ComPtr<ID3D12PipelineState> m_PipelineStateObject;
+
+	ComPtr<ID3D12Resource> m_VertexResource;			
+	struct VERTEX										
+	{
+		XMFLOAT4 position;								
+		XMFLOAT4 color;									
+	};
+	D3D12_VERTEX_BUFFER_VIEW VertexBufferView;			
+
+	D3D12_VIEWPORT viewPort = D3D12_VIEWPORT{ 0, 0, float(WindowWidth), float(WindowHeight), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
+	D3D12_RECT ScissorRect = D3D12_RECT{ 0, 0, WindowWidth, WindowHeight };
 
 public:
 	static LRESULT CALLBACK CallBackFunc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
