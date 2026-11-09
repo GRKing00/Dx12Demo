@@ -1,0 +1,9 @@
+# Visual Studio 本机缓存和用户设置
+.vs/
+*.vcxproj.user
+
+# MSBuild 输出和中间目录
+x64/
+Win32/
+[Dd]ebug/
+[Rr]elease/

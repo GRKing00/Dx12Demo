@@ -1,0 +1,9 @@
+* text=auto
+
+# Visual Studio 工程和源码在检出时使用 CRLF
+*.sln              text eol=crlf
+*.vcxproj          text eol=crlf
+*.vcxproj.filters  text eol=crlf
+*.cpp              text eol=crlf
+*.h                text eol=crlf
+*.hlsl             text eol=crlf
