@@ -567,15 +567,8 @@ void DX12Engine::CreateRootSignature()
 	m_D3D12Device->CreateRootSignature(0, SignatureBlob->GetBufferPointer(), SignatureBlob->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
 }
 
-void DX12Engine::CreatePSO()
+void DX12Engine::CreateInputLayout()
 {
-	//使用PSO来配置渲染管线
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC PSODesc = {};
-
-	// 配置输入布局，IA阶段如何读取顶点数据
-	D3D12_INPUT_LAYOUT_DESC InputLayoutDesc = {};
-	D3D12_INPUT_ELEMENT_DESC InputElementDesc[6] = {};
-
 	//语义1
 	InputElementDesc[0].SemanticName = "POSITION";
 	InputElementDesc[0].SemanticIndex = 0;
@@ -629,55 +622,147 @@ void DX12Engine::CreatePSO()
 
 	InputLayoutDesc.NumElements = 6;
 	InputLayoutDesc.pInputElementDescs = InputElementDesc;
-	PSODesc.InputLayout = InputLayoutDesc;					// 设置渲染管线 IA 阶段的输入样式
+}
 
-	ComPtr<ID3DBlob> VertexShaderBlob;
-	ComPtr<ID3DBlob> PixelShaderBlob;
-	ComPtr<ID3DBlob> ErrorBlob;
+// 创建不透明渲染管线状态对象 
+void DX12Engine::CreateOpaquePSO()
+{
+	// Input Assembler 输入装配阶段
+	OpaquePSODesc.InputLayout = InputLayoutDesc;			
+
+
+	ComPtr<ID3DBlob> VertexShaderBlob;		
+	ComPtr<ID3DBlob> PixelShaderBlob;		
+	ComPtr<ID3DBlob> ErrorBlob;				
 
 	// 编译顶点着色器 Vertex Shader
-	D3DCompileFromFile(L"shader.hlsl", nullptr, nullptr, "VSMain", "vs_5_1", NULL, NULL, &VertexShaderBlob, &ErrorBlob);
-	if (ErrorBlob)
+	D3DCompileFromFile(L"OpaqueShader.hlsl", nullptr, nullptr, "VSMain", "vs_5_1", m_D3DShaderCompileFlag, NULL, &VertexShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
 	{
 		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
 		OutputDebugStringA("\n");
 	}
 
 	// 编译像素着色器 Pixel Shader
-	D3DCompileFromFile(L"shader.hlsl", nullptr, nullptr, "PSMain", "ps_5_1", NULL, NULL, &PixelShaderBlob, &ErrorBlob);
-	if (ErrorBlob)
+	D3DCompileFromFile(L"OpaqueShader.hlsl", nullptr, nullptr, "PSMain", "ps_5_1", m_D3DShaderCompileFlag, NULL, &PixelShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
 	{
 		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
 		OutputDebugStringA("\n");
 	}
 
-	PSODesc.VS.pShaderBytecode = VertexShaderBlob->GetBufferPointer();
-	PSODesc.VS.BytecodeLength = VertexShaderBlob->GetBufferSize();
-	PSODesc.PS.pShaderBytecode = PixelShaderBlob->GetBufferPointer();
-	PSODesc.PS.BytecodeLength = PixelShaderBlob->GetBufferSize();
+	OpaquePSODesc.VS.pShaderBytecode = VertexShaderBlob->GetBufferPointer();	
+	OpaquePSODesc.VS.BytecodeLength = VertexShaderBlob->GetBufferSize();		
+	OpaquePSODesc.PS.pShaderBytecode = PixelShaderBlob->GetBufferPointer();		
+	OpaquePSODesc.PS.BytecodeLength = PixelShaderBlob->GetBufferSize();			
 
 	// Rasterizer 光栅化
-	PSODesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;	
-	PSODesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;	
+	OpaquePSODesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;		
+	OpaquePSODesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;		
 
-	//其他配置
-	PSODesc.pRootSignature = m_RootSignature.Get();
-	PSODesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	PSODesc.NumRenderTargets = 1;
-	PSODesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	PSODesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	PSODesc.SampleDesc.Count = 1;
-	PSODesc.SampleMask = UINT_MAX;
+	OpaquePSODesc.pRootSignature = m_RootSignature.Get();
 
 	// 设置深度测试状态
-	PSODesc.DSVFormat = DSVFormat;											
-	PSODesc.DepthStencilState.DepthEnable = true;							
-	PSODesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;		
-	PSODesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	
+	OpaquePSODesc.DSVFormat = DSVFormat;											
+	OpaquePSODesc.DepthStencilState.DepthEnable = true;								
+	OpaquePSODesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;			
+	OpaquePSODesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	
+
+	OpaquePSODesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	OpaquePSODesc.NumRenderTargets = 1;
+	OpaquePSODesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	OpaquePSODesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	OpaquePSODesc.SampleDesc.Count = 1;
+	OpaquePSODesc.SampleMask = UINT_MAX;
 
 	// 最终创建 PSO 对象
-	m_D3D12Device->CreateGraphicsPipelineState(&PSODesc, IID_PPV_ARGS(&m_PipelineStateObject));
+	m_D3D12Device->CreateGraphicsPipelineState(&OpaquePSODesc, IID_PPV_ARGS(&m_OpaquePSO));
+}
+
+// 创建透明渲染管线状态对象 
+void DX12Engine::CreateTransparentPSO()
+{
+	TransparentPSODesc = OpaquePSODesc;
+
+	ComPtr<ID3DBlob> VertexShaderBlob;		
+	ComPtr<ID3DBlob> PixelShaderBlob;		
+	ComPtr<ID3DBlob> ErrorBlob;				
+
+
+	// 编译顶点着色器 Vertex Shader
+	D3DCompileFromFile(L"TransparentShader.hlsl", nullptr, nullptr, "VSMain", "vs_5_1", m_D3DShaderCompileFlag, NULL, &VertexShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
+	{
+		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
+		OutputDebugStringA("\n");
+	}
+
+	// 编译像素着色器 Pixel Shader
+	D3DCompileFromFile(L"TransparentShader.hlsl", nullptr, nullptr, "PSMain", "ps_5_1", m_D3DShaderCompileFlag, NULL, &PixelShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
+	{
+		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
+		OutputDebugStringA("\n");
+	}
+
+	TransparentPSODesc.VS.pShaderBytecode = VertexShaderBlob->GetBufferPointer();	
+	TransparentPSODesc.VS.BytecodeLength = VertexShaderBlob->GetBufferSize();		
+	TransparentPSODesc.PS.pShaderBytecode = PixelShaderBlob->GetBufferPointer();	
+	TransparentPSODesc.PS.BytecodeLength = PixelShaderBlob->GetBufferSize();		
+
+	// 关闭背面剔除
+	TransparentPSODesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+	// 最终创建 PSO 对象
+	m_D3D12Device->CreateGraphicsPipelineState(&TransparentPSODesc, IID_PPV_ARGS(&m_TransparentPSO));
+}
+
+// 创建半透明渲染管线状态对象
+void DX12Engine::CreateTranslucencePSO()
+{
+	TranslucencePSODesc = OpaquePSODesc;
+
+	ComPtr<ID3DBlob> VertexShaderBlob;		
+	ComPtr<ID3DBlob> PixelShaderBlob;		
+	ComPtr<ID3DBlob> ErrorBlob;				
+
+
+	// 编译顶点着色器 Vertex Shader
+	D3DCompileFromFile(L"TranslucenceShader.hlsl", nullptr, nullptr, "VSMain", "vs_5_1", m_D3DShaderCompileFlag, NULL, &VertexShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
+	{
+		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
+		OutputDebugStringA("\n");
+	}
+
+	// 编译像素着色器 Pixel Shader
+	D3DCompileFromFile(L"TranslucenceShader.hlsl", nullptr, nullptr, "PSMain", "ps_5_1", m_D3DShaderCompileFlag, NULL, &PixelShaderBlob, &ErrorBlob);
+	if (ErrorBlob)		
+	{
+		OutputDebugStringA((const char*)ErrorBlob->GetBufferPointer());
+		OutputDebugStringA("\n");
+	}
+
+	TranslucencePSODesc.VS.pShaderBytecode = VertexShaderBlob->GetBufferPointer();	
+	TranslucencePSODesc.VS.BytecodeLength = VertexShaderBlob->GetBufferSize();		
+	TranslucencePSODesc.PS.pShaderBytecode = PixelShaderBlob->GetBufferPointer();	
+	TranslucencePSODesc.PS.BytecodeLength = PixelShaderBlob->GetBufferSize();		
+
+	TranslucencePSODesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	TranslucencePSODesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+	TranslucencePSODesc.BlendState.RenderTarget[0].BlendEnable = true;							// 开启混合
+	TranslucencePSODesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	TranslucencePSODesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	TranslucencePSODesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+
+
+	TranslucencePSODesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	TranslucencePSODesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	TranslucencePSODesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+
+	// 最终创建 PSO 对象
+	m_D3D12Device->CreateGraphicsPipelineState(&TranslucencePSODesc, IID_PPV_ARGS(&m_TranslucencePSO));
 }
 
 void DX12Engine::UpdateConstantBuffer()
@@ -689,50 +774,55 @@ void DX12Engine::Render()
 {
 	UpdateConstantBuffer();
 
+	RTVHandle = m_RTVHeap->GetCPUDescriptorHandleForHeapStart();
+	FrameIndex = m_DXGISwapChain->GetCurrentBackBufferIndex();
+	RTVHandle.ptr += FrameIndex * RTVDescriptorSize;
+
+
 	m_CommandAllocator->Reset();
 	m_CommandList->Reset(m_CommandAllocator.Get(), nullptr);
 
-	//资源屏障
-	FrameIndex = m_DXGISwapChain->GetCurrentBackBufferIndex();
 	beg_barrier.Transition.pResource = m_RenderTarget[FrameIndex].Get();
 	m_CommandList->ResourceBarrier(1, &beg_barrier);
 
-	m_CommandList->SetPipelineState(m_PipelineStateObject.Get());
 	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
-	m_CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_CommandList->RSSetViewports(1, &viewPort);
 	m_CommandList->RSSetScissorRects(1, &ScissorRect);
-
-	//设置描述符堆，和根参数
-	ID3D12DescriptorHeap* _temp_DescriptorHeaps[] = { m_SRVHeap.Get() };
-	m_CommandList->SetDescriptorHeaps(1, _temp_DescriptorHeaps);
-	m_CommandList->SetGraphicsRootConstantBufferView(0, m_CBVResource->GetGPUVirtualAddress());
-
-
-	// 用 RTV、DSV 句柄设置渲染目标
-	RTVHandle = m_RTVHeap->GetCPUDescriptorHandleForHeapStart();
-	RTVHandle.ptr += FrameIndex * RTVDescriptorSize;//获取渲染目标的RTV
 	m_CommandList->OMSetRenderTargets(1, &RTVHandle, false, &DSVHandle);
 
-	// 清屏
 	m_CommandList->ClearDepthStencilView(DSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1, 0, 0, nullptr);
 	m_CommandList->ClearRenderTargetView(RTVHandle, DirectX::Colors::SkyBlue, 0, nullptr);
 
-	m_ModelManager.RenderAllModel(m_CommandList);
+	ID3D12DescriptorHeap* _temp_DescriptorHeaps[] = { m_SRVHeap.Get() };
+	m_CommandList->SetDescriptorHeaps(1, _temp_DescriptorHeaps);
 
-	//资源屏障
+	m_CommandList->SetGraphicsRootConstantBufferView(0, m_CBVResource->GetGPUVirtualAddress());
+	m_CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	// 先设置 Opaque PSO，渲染不透明物体
+	m_CommandList->SetPipelineState(m_OpaquePSO.Get());
+	m_ModelManager.RenderOpaqueModel(m_CommandList);
+
+	// 再设置 Transparent PSO，渲染透明物体
+	m_CommandList->SetPipelineState(m_TransparentPSO.Get());
+	m_ModelManager.RenderTransparentModel(m_CommandList);
+
+	// 最后设置 Translucence PSO，渲染半透明物体
+	m_CommandList->SetPipelineState(m_TranslucencePSO.Get());
+	m_ModelManager.RenderTranslucenceModel(m_CommandList);
+
 	end_barrier.Transition.pResource = m_RenderTarget[FrameIndex].Get();
 	m_CommandList->ResourceBarrier(1, &end_barrier);
 
-	//执行命令
 	m_CommandList->Close();
 	ID3D12CommandList* _temp_cmdlists[] = { m_CommandList.Get() };
 	m_CommandQueue->ExecuteCommandLists(1, _temp_cmdlists);
-
-	//呈现
 	m_DXGISwapChain->Present(1, NULL);
 
-	//围栏标记，以及到达标记时的响应事件
+
+
+
 	FenceValue++;
 	m_CommandQueue->Signal(m_Fence.Get(), FenceValue);
 	m_Fence->SetEventOnCompletion(FenceValue, RenderEvent);
@@ -789,7 +879,10 @@ void DX12Engine::Run(HINSTANCE hins)
 	engine.CreateCBVResource();
 
 	engine.CreateRootSignature();
-	engine.CreatePSO();
+	engine.CreateInputLayout();
+	engine.CreateOpaquePSO();
+	engine.CreateTransparentPSO();
+	engine.CreateTranslucencePSO();
 
 	engine.RenderLoop();
 }

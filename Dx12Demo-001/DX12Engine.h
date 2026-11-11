@@ -17,7 +17,8 @@ private:
 	HWND m_hwnd;				// ´°¿Ú¾ä±ú
 
 	ComPtr<ID3D12Debug> m_D3D12DebugDevice;				
-	UINT m_DXGICreateFactoryFlag = NULL;				
+	UINT m_DXGICreateFactoryFlag = NULL;		
+	UINT m_D3DShaderCompileFlag = NULL;
 
 	ComPtr<IDXGIFactory5> m_DXGIFactory;				
 	ComPtr<IDXGIAdapter1> m_DXGIAdapter;				
@@ -74,7 +75,16 @@ private:
 	Camera m_FirstCamera;
 
 	ComPtr<ID3D12RootSignature> m_RootSignature;
-	ComPtr<ID3D12PipelineState> m_PipelineStateObject;
+
+	D3D12_INPUT_LAYOUT_DESC InputLayoutDesc = {};
+	D3D12_INPUT_ELEMENT_DESC InputElementDesc[6] = {};
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC OpaquePSODesc = {};		
+	ComPtr<ID3D12PipelineState> m_OpaquePSO;					
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC TransparentPSODesc = {};	
+	ComPtr<ID3D12PipelineState> m_TransparentPSO;				
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC TranslucencePSODesc = {};
+	ComPtr<ID3D12PipelineState> m_TranslucencePSO;				
 
 	D3D12_VIEWPORT viewPort = D3D12_VIEWPORT{ 0, 0, float(WindowWidth), float(WindowHeight), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
 	D3D12_RECT ScissorRect = D3D12_RECT{ 0, 0, WindowWidth, WindowHeight };
@@ -103,7 +113,11 @@ public:
 	void CreateCBVResource();
 
 	void CreateRootSignature();
-	void CreatePSO();
+	void CreateInputLayout();
+	void CreateOpaquePSO();
+	void CreateTransparentPSO();
+	void CreateTranslucencePSO();
+
 
 	void UpdateConstantBuffer();
 	void Render();

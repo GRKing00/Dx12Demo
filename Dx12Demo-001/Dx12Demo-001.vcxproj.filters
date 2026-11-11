@@ -56,5 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader.hlsl" />
+    <FxCompile Include="OpaqueShader.hlsl" />
+    <FxCompile Include="TransparentShader.hlsl" />
+    <FxCompile Include="TranslucenceShader.hlsl" />
   </ItemGroup>
 </Project>

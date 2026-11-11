@@ -440,8 +440,604 @@ void Planks_Oak_SoildStair::DrawModel(ComPtr<ID3D12GraphicsCommandList>& pComman
 }
 
 
+Glass_Light_Blue::Glass_Light_Blue()
+{
+	this->AppendTextureKey("glass_light_blue");
+}
+
+void Glass_Light_Blue::DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+{
+	pCommandList->IASetIndexBuffer(&IndexBufferView);
+	pCommandList->IASetVertexBuffers(0, 2, VertexBufferView);
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["glass_light_blue"]);
+	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+}
+
+VERTEX Door::VertexArray[96] =
+{
+	// 门上部分
+	{{0,2,0,1},{0,0}},
+	{{1,2,0,1},{1,0}},
+	{{1,1,0,1},{1,1}},
+	{{0,1,0,1},{0,1}},
+
+	{{1,2,0.2,1},{1,0}},
+	{{0,2,0.2,1},{0,0}},
+	{{0,1,0.2,1},{0,1}},
+	{{1,1,0.2,1},{1,1}},
+
+	// 门下部分
+	{{0,1,0,1},{0,0}},
+	{{1,1,0,1},{1,0}},
+	{{1,0,0,1},{1,1}},
+	{{0,0,0,1},{0,1}},
+
+	{{1,1,0.2,1},{0,0}},
+	{{0,1,0.2,1},{1,0}},
+	{{0,0,0.2,1},{1,1}},
+	{{1,0,0.2,1},{0,1}},
+
+	// 门隙部分
+	{{0,2,0.2,1},{0.1875, 0.4375}},
+	{{1,2,0.2,1},{0.1875, 0.4375}},
+	{{1,2,0,1},{0.1875, 0.4375}},
+	{{0,2,0,1},{0.1875, 0.4375}},
+
+	{{0,0,0,1},{0.1875, 0.4375}},
+	{{1,0,0,1},{0.1875, 0.4375}},
+	{{1,0,0.2,1},{0.1875, 0.4375}},
+	{{0,0,0.2,1},{0.1875, 0.4375}},
+
+	{{0,2,0.2,1},{0.1875, 0.4375}},
+	{{0,2,0,1},{0.1875, 0.4375}},
+	{{0,0,0,1},{0.1875, 0.4375}},
+	{{0,0,0.2,1},{0.1875, 0.4375}},
+
+	{{1,2,0,1},{0.1875, 0.4375}},
+	{{1,2,0.2,1},{0.1875, 0.4375}},
+	{{1,0,0.2,1},{0.1875, 0.4375}},
+	{{1,0,0,1},{0.1875, 0.4375}},
+
+	// 上部分门隙
+
+	{{0.1875, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0, 1},{0.1875, 0.4375}},
+
+	{{0.1875, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.5, 0, 1},{0.1875, 0.4375}},
+
+	{{0.1875, 1.5, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.4375, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.5, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0.2, 1}, {0.1875, 0.4375}},
 
 
+	{{0.1875, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.625, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.1875, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.8125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.1875, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.625, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.4375, 1.8125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.625, 0.2, 1},{0.1875, 0.4375}},
+
+
+	{{0.5625, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.8125, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.8125, 1.3125, 0, 1}, {0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.5625, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.8125, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.8125, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.5, 0, 1},{0.1875, 0.4375}},
+
+	{{0.5625, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0, 1},{0.1875, 0.4375} },
+
+	{{0.8125, 1.5, 0.2, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.5, 0, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.3125, 0, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.3125, 0.2, 1},{0.1875, 0.4375} },
+
+
+	{ {0.5625, 1.625, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.5625, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.8125, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.5625, 1.8125, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.8125, 1.8125, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0.2, 1}, {0.1875, 0.4375} }
+};
+
+UINT Door::IndexArray[144] =
+{
+	// 门上部分
+	0,1,2,0,2,3,
+	4,5,6,4,6,7,
+
+	// 门下部分
+	8,9,10,8,10,11,
+	12,13,14,12,14,15,
+
+	// 门隙部分
+	16,17,18,16,18,19,
+	20,21,22,20,22,23,
+	24,25,26,24,26,27,
+	28,29,30,28,30,31,
+
+	// 上部分门隙
+	32,33,34,32,34,35,
+	36,37,38,36,38,39,
+	40,41,42,40,42,43,
+	44,45,46,44,46,47,
+
+	48,49,50,48,50,51,
+	52,53,54,52,54,55,
+	56,57,58,56,58,59,
+	60,61,62,60,62,63,
+
+	64,65,66,64,66,67,
+	68,69,70,68,70,71,
+	72,73,74,72,74,75,
+	76,77,78,76,78,79,
+
+	80,81,82,80,82,83,
+	84,85,86,84,86,87,
+	88,89,90,88,90,91,
+	92,93,94,92,94,95
+};
+
+const VERTEX* Door::GetVertexData() const
+{
+	return Door::VertexArray;
+}
+
+Door::Door()
+{
+	this->AppendTextureKey("door_wood_lower");
+	this->AppendTextureKey("door_wood_upper");
+}
+
+void Door::CreateResourceAndDescriptor(ComPtr<ID3D12Device4>& pD3D12Device)
+{
+	//CPU上的矩阵数据
+	XMFLOAT4X4 _temp_ModelMatrix = {};
+	XMStoreFloat4x4(&_temp_ModelMatrix, ModelMatrix);
+	std::vector<XMFLOAT4X4> _temp_ModelMatrixGroup;
+	_temp_ModelMatrixGroup.assign(96, _temp_ModelMatrix);
+
+
+	D3D12_RESOURCE_DESC UploadResourceDesc = {};
+	UploadResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	UploadResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	UploadResourceDesc.Height = 1;
+	UploadResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UploadResourceDesc.MipLevels = 1;
+	UploadResourceDesc.DepthOrArraySize = 1;
+	UploadResourceDesc.SampleDesc.Count = 1;
+	UploadResourceDesc.SampleDesc.Quality = 0;
+	D3D12_HEAP_PROPERTIES HeapProperties = { D3D12_HEAP_TYPE_UPLOAD };
+
+	// 创建 VertexResource
+	UploadResourceDesc.Width = 96 * sizeof(VERTEX);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_VertexResource));
+
+	// 创建 ModelMatrix
+	UploadResourceDesc.Width = 96 * sizeof(XMFLOAT4X4);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_ModelMatrixResource));
+
+	// 创建 IndexResource
+	UploadResourceDesc.Width = 144 * sizeof(XMFLOAT4X4);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_IndexResource));
+
+
+	// 将数据进行转移: CPU 高速缓存 -> CPU 共享内存
+
+	BYTE* TransmitPointer = nullptr;
+
+	m_VertexResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, GetVertexData(), 96 * sizeof(VERTEX));
+	m_VertexResource->Unmap(0, nullptr);
+
+	m_ModelMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, &_temp_ModelMatrixGroup[0], 96 * sizeof(XMFLOAT4X4));
+	m_ModelMatrixResource->Unmap(0, nullptr);
+
+	m_IndexResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, IndexArray, 144 * sizeof(UINT));
+	m_IndexResource->Unmap(0, nullptr);
+
+
+	// VBV[0]: 描述顶点位置与纹理 UV 坐标，占据第 0 号输入槽
+	VertexBufferView[0].BufferLocation = m_VertexResource->GetGPUVirtualAddress();
+	VertexBufferView[0].SizeInBytes = 96 * sizeof(VERTEX);
+	VertexBufferView[0].StrideInBytes = sizeof(VERTEX);
+
+	// VBV[1]: 描述顶点的模型矩阵，占据第 1 号输入槽
+	VertexBufferView[1].BufferLocation = m_ModelMatrixResource->GetGPUVirtualAddress();
+	VertexBufferView[1].SizeInBytes = 96 * sizeof(XMFLOAT4X4);
+	VertexBufferView[1].StrideInBytes = sizeof(XMFLOAT4X4);
+
+	// IBV: 描述顶点的索引
+	IndexBufferView.BufferLocation = m_IndexResource->GetGPUVirtualAddress();
+	IndexBufferView.SizeInBytes = 144 * sizeof(UINT);
+	IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+}
+
+void Door::DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+{
+	pCommandList->IASetIndexBuffer(&IndexBufferView);
+	pCommandList->IASetVertexBuffers(0, 2, VertexBufferView);
+
+	// 门上部分
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["door_wood_upper"]);
+	pCommandList->DrawIndexedInstanced(12, 1, 0, 0, 0);
+
+	// 门下部分
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["door_wood_lower"]);
+	pCommandList->DrawIndexedInstanced(12, 1, 12, 0, 0);
+
+	// 门隙部分
+	pCommandList->DrawIndexedInstanced(24, 1, 24, 0, 0);
+
+	// 上门隙部分
+	pCommandList->DrawIndexedInstanced(96, 1, 48, 0, 0);
+}
+
+VERTEX Mirror_Door::VertexArray[96] =
+{
+	// 门上部分
+	{{0,2,0,1},{1,0}},
+	{{1,2,0,1},{0,0}},
+	{{1,1,0,1},{0,1}},
+	{{0,1,0,1},{1,1}},
+
+	{{1,2,0.2,1},{0,0}},
+	{{0,2,0.2,1},{1,0}},
+	{{0,1,0.2,1},{1,1}},
+	{{1,1,0.2,1},{0,1}},
+
+	// 门下部分
+	{{0,1,0,1},{0,0}},
+	{{1,1,0,1},{1,0}},
+	{{1,0,0,1},{1,1}},
+	{{0,0,0,1},{0,1}},
+
+	{{1,1,0.2,1},{0,0}},
+	{{0,1,0.2,1},{1,0}},
+	{{0,0,0.2,1},{1,1}},
+	{{1,0,0.2,1},{0,1}},
+
+	// 门隙部分
+	{{0,2,0.2,1},{0.1875, 0.4375}},
+	{{1,2,0.2,1},{0.1875, 0.4375}},
+	{{1,2,0,1},{0.1875, 0.4375}},
+	{{0,2,0,1},{0.1875, 0.4375}},
+
+	{{0,0,0,1},{0.1875, 0.4375}},
+	{{1,0,0,1},{0.1875, 0.4375}},
+	{{1,0,0.2,1},{0.1875, 0.4375}},
+	{{0,0,0.2,1},{0.1875, 0.4375}},
+
+	{{0,2,0.2,1},{0.1875, 0.4375}},
+	{{0,2,0,1},{0.1875, 0.4375}},
+	{{0,0,0,1},{0.1875, 0.4375}},
+	{{0,0,0.2,1},{0.1875, 0.4375}},
+
+	{{1,2,0,1},{0.1875, 0.4375}},
+	{{1,2,0.2,1},{0.1875, 0.4375}},
+	{{1,0,0.2,1},{0.1875, 0.4375}},
+	{{1,0,0,1},{0.1875, 0.4375}},
+
+	// 上部分门隙
+
+	{{0.1875, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0, 1},{0.1875, 0.4375}},
+
+	{{0.1875, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.5, 0, 1},{0.1875, 0.4375}},
+
+	{{0.1875, 1.5, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.3125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.4375, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.5, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.3125, 0.2, 1}, {0.1875, 0.4375}},
+
+
+	{{0.1875, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0, 1},{0.1875, 0.4375}},
+	{{0.1875, 1.625, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.1875, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.8125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.1875, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.8125, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.625, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.1875, 1.625, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.4375, 1.8125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.8125, 0, 1}, {0.1875, 0.4375}},
+	{{0.4375, 1.625, 0, 1},{0.1875, 0.4375}},
+	{{0.4375, 1.625, 0.2, 1},{0.1875, 0.4375}},
+
+
+	{{0.5625, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.8125, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.8125, 1.3125, 0, 1}, {0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0, 1}, {0.1875, 0.4375}},
+
+	{{0.5625, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.8125, 1.5, 0.2, 1}, {0.1875, 0.4375}},
+	{{0.8125, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.5, 0, 1},{0.1875, 0.4375}},
+
+	{{0.5625, 1.5, 0, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.5, 0.2, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0.2, 1},{0.1875, 0.4375}},
+	{{0.5625, 1.3125, 0, 1},{0.1875, 0.4375} },
+
+	{{0.8125, 1.5, 0.2, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.5, 0, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.3125, 0, 1},{0.1875, 0.4375} },
+	{{0.8125, 1.3125, 0.2, 1},{0.1875, 0.4375} },
+
+
+	{ {0.5625, 1.625, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.5625, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.8125, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.5625, 1.8125, 0, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.8125, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0.2, 1}, {0.1875, 0.4375} },
+	{ {0.5625, 1.625, 0, 1}, {0.1875, 0.4375} },
+
+	{ {0.8125, 1.8125, 0.2, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.8125, 0, 1},{0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0, 1}, {0.1875, 0.4375} },
+	{ {0.8125, 1.625, 0.2, 1}, {0.1875, 0.4375} }
+};
+
+const VERTEX* Mirror_Door::GetVertexData() const
+{
+	return Mirror_Door::VertexArray;
+}
+
+Mirror_Door::Mirror_Door() : Door()
+{
+}
+
+VERTEX Bed::VertexArray[32] =
+{
+	// 床脚正面
+	{{0,0.5,0,1},{0,0.5}},
+	{{1,0.5,0,1},{1,0.5}},
+	{{1,0,0,1},{1,1}},
+	{{0,0,0,1},{0,1}},
+
+	// 床头正面
+	{{1,0.5,2,1},{0,0.5}},
+	{{0,0.5,2,1},{1,0.5}},
+	{{0,0,2,1},{1,1}},
+	{{1,0,2,1},{0,1}},
+
+	// 床顶
+	{{0,0.5,2,1},{1,0}},
+	{{1,0.5,2,1},{1,1}},
+	{{1,0.5,1,1},{0,1}},
+	{{0,0.5,1,1},{0,0}},
+
+	{{0,0.5,1,1},{1,0}},
+	{{1,0.5,1,1},{1,1}},
+	{{1,0.5,0,1},{0,1}},
+	{{0,0.5,0,1},{0,0}},
+
+	// 床头一侧
+	{{0,0.5,2,1},{1,0.5}},
+	{{0,0.5,1,1},{0,0.5}},
+	{{0,0,1,1},{0,1}},
+	{{0,0,2,1},{1,1}},
+
+	{{1,0.5,1,1},{0,0.5}},
+	{{1,0.5,2,1},{1,0.5}},
+	{{1,0,2,1},{1,1}},
+	{{1,0,1,1},{0,1}},
+
+	// 床脚一侧
+	{{0,0.5,1,1},{1,0.5}},
+	{{0,0.5,0,1},{0,0.5}},
+	{{0,0,0,1},{0,1}},
+	{{0,0,1,1},{1,1}},
+
+	{{1,0.5,0,1},{0,0.5}},
+	{{1,0.5,1,1},{1,0.5}},
+	{{1,0,1,1},{1,1}},
+	{{1,0,0,1},{0,1}}
+};
+
+UINT Bed::IndexArray[48] =
+{
+	// 床脚正面
+	0,1,2,0,2,3,
+
+	// 床头正面
+	4,5,6,4,6,7,
+
+	// 床顶
+	8,9,10,8,10,11,
+	12,13,14,12,14,15,
+
+	// 床头一侧
+	16,17,18,16,18,19,
+	20,21,22,20,22,23,
+
+	// 床脚一侧
+	24,25,26,24,26,27,
+	28,29,30,28,30,31
+};
+
+Bed::Bed()
+{
+	this->AppendTextureKey("bed_feet_end");
+	this->AppendTextureKey("bed_feet_side");
+	this->AppendTextureKey("bed_feet_top");
+	this->AppendTextureKey("bed_head_top");
+	this->AppendTextureKey("bed_head_side");
+	this->AppendTextureKey("bed_head_end");
+}
+
+void Bed::CreateResourceAndDescriptor(ComPtr<ID3D12Device4>& pD3D12Device)
+{
+	XMFLOAT4X4 _temp_ModelMatrix = {};
+	XMStoreFloat4x4(&_temp_ModelMatrix, ModelMatrix);
+	std::vector<XMFLOAT4X4> _temp_ModelMatrixGroup;
+	_temp_ModelMatrixGroup.assign(32, _temp_ModelMatrix);
+
+
+	D3D12_RESOURCE_DESC UploadResourceDesc = {};
+	UploadResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	UploadResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	UploadResourceDesc.Height = 1;
+	UploadResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UploadResourceDesc.MipLevels = 1;
+	UploadResourceDesc.DepthOrArraySize = 1;
+	UploadResourceDesc.SampleDesc.Count = 1;
+	UploadResourceDesc.SampleDesc.Quality = 0;
+	D3D12_HEAP_PROPERTIES HeapProperties = { D3D12_HEAP_TYPE_UPLOAD };
+
+	// 创建 VertexResource
+	UploadResourceDesc.Width = 32 * sizeof(VERTEX);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_VertexResource));
+
+	// 创建 ModelMatrix
+	UploadResourceDesc.Width = 32 * sizeof(XMFLOAT4X4);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_ModelMatrixResource));
+
+	// 创建 IndexResource
+	UploadResourceDesc.Width = 48 * sizeof(XMFLOAT4X4);
+	pD3D12Device->CreateCommittedResource(&HeapProperties, D3D12_HEAP_FLAG_NONE,
+		&UploadResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_IndexResource));
+
+
+	// 将数据进行转移: CPU 高速缓存 -> CPU 共享内存
+
+	BYTE* TransmitPointer = nullptr;
+
+	m_VertexResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, VertexArray, 32 * sizeof(VERTEX));
+	m_VertexResource->Unmap(0, nullptr);
+
+
+	m_ModelMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, &_temp_ModelMatrixGroup[0], 32 * sizeof(XMFLOAT4X4));
+	m_ModelMatrixResource->Unmap(0, nullptr);
+
+
+	m_IndexResource->Map(0, nullptr, reinterpret_cast<void**>(&TransmitPointer));
+	memcpy(TransmitPointer, IndexArray, 48 * sizeof(UINT));
+	m_IndexResource->Unmap(0, nullptr);
+
+
+	// VBV[0]: 描述顶点位置与纹理 UV 坐标，占据第 0 号输入槽
+	VertexBufferView[0].BufferLocation = m_VertexResource->GetGPUVirtualAddress();
+	VertexBufferView[0].SizeInBytes = 32 * sizeof(VERTEX);
+	VertexBufferView[0].StrideInBytes = sizeof(VERTEX);
+
+	// VBV[1]: 描述顶点的模型矩阵，占据第 1 号输入槽
+	VertexBufferView[1].BufferLocation = m_ModelMatrixResource->GetGPUVirtualAddress();
+	VertexBufferView[1].SizeInBytes = 32 * sizeof(XMFLOAT4X4);
+	VertexBufferView[1].StrideInBytes = sizeof(XMFLOAT4X4);
+
+	// IBV: 描述顶点的索引
+	IndexBufferView.BufferLocation = m_IndexResource->GetGPUVirtualAddress();
+	IndexBufferView.SizeInBytes = 48 * sizeof(UINT);
+	IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+}
+
+void Bed::DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+{
+	pCommandList->IASetIndexBuffer(&IndexBufferView);
+	pCommandList->IASetVertexBuffers(0, 2, VertexBufferView);
+
+	// 床脚正面
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_feet_end"]);
+	pCommandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+
+	// 床头正面
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_head_end"]);
+	pCommandList->DrawIndexedInstanced(6, 1, 6, 0, 0);
+
+	// 床顶
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_head_top"]);
+	pCommandList->DrawIndexedInstanced(6, 1, 12, 0, 0);
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_feet_top"]);
+	pCommandList->DrawIndexedInstanced(6, 1, 18, 0, 0);
+
+	// 床头一侧
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_head_side"]);
+	pCommandList->DrawIndexedInstanced(12, 1, 24, 0, 0);
+
+	// 床脚一侧
+	pCommandList->SetGraphicsRootDescriptorTable(1, Texture_GPUHandle_Map["bed_feet_side"]);
+	pCommandList->DrawIndexedInstanced(12, 1, 36, 0, 0);
+}
 
 ModelManager::ModelManager()
 {
@@ -457,9 +1053,20 @@ ModelManager::ModelManager()
 	Texture_SRV_Map["crafting_table_side"].TextureFilePath = L"resource/crafting_table_side.png";
 	Texture_SRV_Map["crafting_table_top"].TextureFilePath = L"resource/crafting_table_top.png";
 	Texture_SRV_Map["planks_oak"].TextureFilePath = L"resource/planks_oak.png";
+
+	Texture_SRV_Map["glass_light_blue"].TextureFilePath = L"resource/glass_light_blue.png";
+	Texture_SRV_Map["door_wood_lower"].TextureFilePath = L"resource/door_wood_lower.png";
+	Texture_SRV_Map["door_wood_upper"].TextureFilePath = L"resource/door_wood_upper.png";
+	Texture_SRV_Map["bed_feet_end"].TextureFilePath = L"resource/bed_feet_end.png";
+	Texture_SRV_Map["bed_feet_side"].TextureFilePath = L"resource/bed_feet_side.png";
+	Texture_SRV_Map["bed_feet_top"].TextureFilePath = L"resource/bed_feet_top.png";
+	Texture_SRV_Map["bed_head_end"].TextureFilePath = L"resource/bed_head_end.png";
+	Texture_SRV_Map["bed_head_side"].TextureFilePath = L"resource/bed_head_side.png";
+	Texture_SRV_Map["bed_head_top"].TextureFilePath = L"resource/bed_head_top.png";
 }
 
 void ModelManager::CreateBlock()
+
 {
 	// 两层泥土地基，y 是高度
 	for (int x = 0; x < 10; x++)
@@ -470,7 +1077,7 @@ void ModelManager::CreateBlock()
 			{
 				Model* dirt = new Dirt();							
 				dirt->SetModelMatrix(XMMatrixTranslation(x, y, z));	
-				ModelGroup.push_back(dirt);							
+				OpaqueGroup.push_back(dirt);							
 			}
 		}
 	}
@@ -482,7 +1089,7 @@ void ModelManager::CreateBlock()
 		{
 			Model* grass = new Grass();
 			grass->SetModelMatrix(XMMatrixTranslation(x, 0, z));
-			ModelGroup.push_back(grass);
+			OpaqueGroup.push_back(grass);
 		}
 	}
 
@@ -494,7 +1101,7 @@ void ModelManager::CreateBlock()
 		{
 			Model* plank = new Planks_Oak();
 			plank->SetModelMatrix(XMMatrixTranslation(x, 2, z));
-			ModelGroup.push_back(plank);
+			OpaqueGroup.push_back(plank);
 		}
 	}
 
@@ -505,56 +1112,56 @@ void ModelManager::CreateBlock()
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(3, y, 2));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(2, y, 3));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(6, y, 2));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(7, y, 3));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(7, y, 6));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(6, y, 7));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(2, y, 6));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 	for (int y = 1; y < 7; y++)
 	{
 		Model* log_oak = new Log_Oak();
 		log_oak->SetModelMatrix(XMMatrixTranslation(3, y, 7));
-		ModelGroup.push_back(log_oak);
+		OpaqueGroup.push_back(log_oak);
 	}
 
 
@@ -562,11 +1169,11 @@ void ModelManager::CreateBlock()
 	{
 		Model* plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(4, 2, 2));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(5, 2, 2));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		for (int y = 5; y < 7; y++)
 		{
@@ -574,7 +1181,7 @@ void ModelManager::CreateBlock()
 			{
 				plank = new Planks_Oak();
 				plank->SetModelMatrix(XMMatrixTranslation(x, y, 2));
-				ModelGroup.push_back(plank);
+				OpaqueGroup.push_back(plank);
 			}
 		}
 
@@ -584,7 +1191,7 @@ void ModelManager::CreateBlock()
 			{
 				plank = new Planks_Oak();
 				plank->SetModelMatrix(XMMatrixTranslation(2, y, z));
-				ModelGroup.push_back(plank);
+				OpaqueGroup.push_back(plank);
 			}
 		}
 
@@ -594,7 +1201,7 @@ void ModelManager::CreateBlock()
 			{
 				plank = new Planks_Oak();
 				plank->SetModelMatrix(XMMatrixTranslation(x, y, 7));
-				ModelGroup.push_back(plank);
+				OpaqueGroup.push_back(plank);
 			}
 		}
 
@@ -604,49 +1211,49 @@ void ModelManager::CreateBlock()
 			{
 				plank = new Planks_Oak();
 				plank->SetModelMatrix(XMMatrixTranslation(7, y, z));
-				ModelGroup.push_back(plank);
+				OpaqueGroup.push_back(plank);
 			}
 		}
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(2, 6, 4));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(2, 6, 5));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(4, 6, 7));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(5, 6, 7));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(7, 6, 4));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		plank = new Planks_Oak();
 		plank->SetModelMatrix(XMMatrixTranslation(7, 6, 5));
-		ModelGroup.push_back(plank);
+		OpaqueGroup.push_back(plank);
 
 		Model* stair = new Planks_Oak_SoildStair();
 		stair->SetModelMatrix(XMMatrixTranslation(4, 2, 1));
-		ModelGroup.push_back(stair);
+		OpaqueGroup.push_back(stair);
 
 		stair = new Planks_Oak_SoildStair();
 		stair->SetModelMatrix(XMMatrixTranslation(5, 2, 1));
-		ModelGroup.push_back(stair);
+		OpaqueGroup.push_back(stair);
 
 		stair = new Planks_Oak_SoildStair();
 		stair->SetModelMatrix(XMMatrixTranslation(4, 1, 0));
-		ModelGroup.push_back(stair);
+		OpaqueGroup.push_back(stair);
 
 		stair = new Planks_Oak_SoildStair();
 		stair->SetModelMatrix(XMMatrixTranslation(5, 1, 0));
-		ModelGroup.push_back(stair);
+		OpaqueGroup.push_back(stair);
 	}
 
 	// 4x4 木板房顶
@@ -657,7 +1264,7 @@ void ModelManager::CreateBlock()
 		{
 			Model* plank = new Planks_Oak();
 			plank->SetModelMatrix(XMMatrixTranslation(x, 6, z));
-			ModelGroup.push_back(plank);
+			OpaqueGroup.push_back(plank);
 		}
 	}
 
@@ -670,18 +1277,18 @@ void ModelManager::CreateBlock()
 		{
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(XMMatrixTranslation(x, 6, 1));
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int x = 3; x < 7; x++)
 		{
 			XMMATRIX transform = XMMatrixTranslation(-0.5, -0.5, -0.5);
-			transform *= XMMatrixRotationY(XM_PI);						// 平移中心后，再旋转，否则会出错 (旋转角度是弧度)
-			transform *= XMMatrixTranslation(0.5, 0.5, 0.5);			// 旋转完再还原
-			transform *= XMMatrixTranslation(x, 6, 8);					// 再平移到对应的坐标
+			transform *= XMMatrixRotationY(XM_PI);						
+			transform *= XMMatrixTranslation(0.5, 0.5, 0.5);			
+			transform *= XMMatrixTranslation(x, 6, 8);					
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int z = 3; z < 7; z++)
@@ -692,7 +1299,7 @@ void ModelManager::CreateBlock()
 			transform *= XMMatrixTranslation(1, 6, z);
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int z = 3; z < 7; z++)
@@ -703,7 +1310,7 @@ void ModelManager::CreateBlock()
 			transform *= XMMatrixTranslation(8, 6, z);
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		// 第二层
@@ -712,7 +1319,7 @@ void ModelManager::CreateBlock()
 		{
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(XMMatrixTranslation(x, 7, 2));
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int x = 3; x < 7; x++)
@@ -723,7 +1330,7 @@ void ModelManager::CreateBlock()
 			transform *= XMMatrixTranslation(x, 7, 7);
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int z = 3; z < 7; z++)
@@ -734,7 +1341,7 @@ void ModelManager::CreateBlock()
 			transform *= XMMatrixTranslation(2, 7, z);
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		for (int z = 3; z < 7; z++)
@@ -745,7 +1352,7 @@ void ModelManager::CreateBlock()
 			transform *= XMMatrixTranslation(7, 7, z);
 			Model* stair = new Planks_Oak_SoildStair();
 			stair->SetModelMatrix(transform);
-			ModelGroup.push_back(stair);
+			OpaqueGroup.push_back(stair);
 		}
 
 		// 补上屋顶空位
@@ -756,7 +1363,7 @@ void ModelManager::CreateBlock()
 			{
 				Model* plank = new Planks_Oak();
 				plank->SetModelMatrix(XMMatrixTranslation(x, 7, z));
-				ModelGroup.push_back(plank);
+				OpaqueGroup.push_back(plank);
 			}
 		}
 	}
@@ -765,22 +1372,88 @@ void ModelManager::CreateBlock()
 	{
 		Model* craft_table = new Crafting_Table();
 		craft_table->SetModelMatrix(XMMatrixTranslation(3, 3, 6));
-		ModelGroup.push_back(craft_table);
+		OpaqueGroup.push_back(craft_table);
 
 		Model* furnace = new Furnace();
 		furnace->SetModelMatrix(XMMatrixTranslation(4, 3, 6));
-		ModelGroup.push_back(furnace);
+		OpaqueGroup.push_back(furnace);
 
 		furnace = new Furnace();
 		furnace->SetModelMatrix(XMMatrixTranslation(5, 3, 6));
-		ModelGroup.push_back(furnace);
+		OpaqueGroup.push_back(furnace);
 	}
 
+	// 门
+	{
+		Model* door = new Door();
+		door->SetModelMatrix(XMMatrixTranslation(4, 3, 2));
+		TransparentGroup.push_back(door);
+
+		door = new Mirror_Door();
+		door->SetModelMatrix(XMMatrixTranslation(5, 3, 2));
+		TransparentGroup.push_back(door);
+	}
+
+	// 床
+	{
+		Model* bed = new Bed();
+		bed->SetModelMatrix(XMMatrixTranslation(6, 3, 5));
+		TransparentGroup.push_back(bed);
+	}
+
+	// 玻璃
+	{
+		for (int y = 4; y < 6; y++)
+		{
+			for (int z = 4; z < 6; z++)
+			{
+				Model* glass = new Glass_Light_Blue();
+				glass->SetModelMatrix(XMMatrixTranslation(2, y, z));
+				TranslucenceGroup.push_back(glass);
+			}
+			for (int z = 4; z < 6; z++)
+			{
+				Model* glass = new Glass_Light_Blue();
+				glass->SetModelMatrix(XMMatrixTranslation(7, y, z));
+				TranslucenceGroup.push_back(glass);
+			}
+		}
+
+		for (int x = 4; x < 6; x++)
+		{
+			for (int y = 4; y < 6; y++)
+			{
+				Model* glass = new Glass_Light_Blue();
+				glass->SetModelMatrix(XMMatrixTranslation(x, y, 7));
+				TranslucenceGroup.push_back(glass);
+			}
+		}
+	}
 }
 
 void ModelManager::CreateModelResource(ComPtr<ID3D12Device4>& pD3D12Device)
 {
-	for (auto& model : ModelGroup)
+	for (auto& model : OpaqueGroup)
+	{
+		// 创建模型资源
+		model->CreateResourceAndDescriptor(pD3D12Device);
+		//映射模型要使用的纹理
+		for (const auto& texture : model->RequestForTextureMap())
+		{
+			model->SetTextureGPUHandle(texture.first, Texture_SRV_Map[texture.first].GPUHandle);
+		}
+	}
+	for (auto& model : TransparentGroup)
+	{
+		// 创建模型资源
+		model->CreateResourceAndDescriptor(pD3D12Device);
+		//映射模型要使用的纹理
+		for (const auto& texture : model->RequestForTextureMap())
+		{
+			model->SetTextureGPUHandle(texture.first, Texture_SRV_Map[texture.first].GPUHandle);
+		}
+	}
+	for (auto& model : TranslucenceGroup)
 	{
 		// 创建模型资源
 		model->CreateResourceAndDescriptor(pD3D12Device);
@@ -792,10 +1465,31 @@ void ModelManager::CreateModelResource(ComPtr<ID3D12Device4>& pD3D12Device)
 	}
 }
 
-void ModelManager::RenderAllModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+// 渲染半透明模型
+void ModelManager::RenderTranslucenceModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
 {
-	// 遍历模型组进行绘制
-	for (const auto& model : ModelGroup)
+	// 遍历模型组
+	for (const auto& model : TranslucenceGroup)
+	{
+		model->DrawModel(pCommandList);
+	}
+}
+
+// 渲染透明模型
+void ModelManager::RenderTransparentModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+{
+	// 遍历模型组
+	for (const auto& model : TransparentGroup)
+	{
+		model->DrawModel(pCommandList);
+	}
+}
+
+// 渲染不透明模型
+void ModelManager::RenderOpaqueModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+{
+	// 遍历模型组
+	for (const auto& model : OpaqueGroup)
 	{
 		model->DrawModel(pCommandList);
 	}

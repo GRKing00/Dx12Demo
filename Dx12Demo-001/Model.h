@@ -155,6 +155,74 @@ public:
 	virtual void DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList) override;
 };
 
+// 淡蓝色玻璃 
+class Glass_Light_Blue : public SoildBlock
+{
+public:
+
+	Glass_Light_Blue();
+
+	virtual void DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList) override;
+};
+
+// 门 
+class Door : public Model
+{
+protected:
+
+	static VERTEX VertexArray[96];
+
+	static UINT IndexArray[144];
+
+	virtual const VERTEX* GetVertexData() const;
+
+public:
+
+	Door();
+
+	// 创建资源与描述符，
+	virtual void CreateResourceAndDescriptor(ComPtr<ID3D12Device4>& pD3D12Device) override;
+
+	// 绘制模型，
+	virtual void DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList) override;
+};
+
+
+// 门的镜像版本 (实例类)，继承自门
+class Mirror_Door : public Door
+{
+protected:
+
+	static VERTEX VertexArray[96];
+
+	const VERTEX* GetVertexData() const override;
+
+public:
+
+	Mirror_Door();
+};
+
+
+// 床 
+class Bed : public Model
+{
+protected:
+
+	static VERTEX VertexArray[32];
+
+	static UINT IndexArray[48];
+
+public:
+
+	Bed();
+
+	// 创建资源与描述符
+	virtual void CreateResourceAndDescriptor(ComPtr<ID3D12Device4>& pD3D12Device) override;
+
+	// 绘制模型
+	virtual void DrawModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList) override;
+};
+
 // 模型管理器
 class ModelManager
 {
@@ -174,8 +242,13 @@ public:
 
 	// 纹理映射表
 	std::unordered_map<std::string, TEXTURE_MAP_INFO> Texture_SRV_Map;
-	// 模型组
-	std::vector<Model*> ModelGroup;
+
+	// 非透明模型组，
+	std::vector<Model*> OpaqueGroup;
+	// 透明模型组
+	std::vector<Model*> TransparentGroup;
+	// 半透明模型组
+	std::vector<Model*> TranslucenceGroup;
 
 
 public:
@@ -189,7 +262,7 @@ public:
 	// 创建模型资源
 	void CreateModelResource(ComPtr<ID3D12Device4>& pD3D12Device);
 
-	// 渲染全部模型！
-	void RenderAllModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList);
-
+	void RenderTranslucenceModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList);
+	void RenderTransparentModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList);
+	void RenderOpaqueModel(ComPtr<ID3D12GraphicsCommandList>& pCommandList);
 };
