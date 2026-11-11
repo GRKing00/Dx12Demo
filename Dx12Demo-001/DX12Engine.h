@@ -1,21 +1,11 @@
 #pragma once
-#include<Windows.h>		
-#include<d3d12.h>		
-#include<dxgi1_6.h>	
-#include<DirectXColors.h>
-#include<DirectXMath.h>
-#include<d3dcompiler.h>	
+#include "pch.h"
+#include "Utils.h"
+#include "CallBackWrapper.h"
+#include "Camera.h"
+#include "DX12TextureHelper.h"
+#include "Model.h"
 
-#include<wrl.h>			//Ê¹ÓÃComPtr
-
-#pragma comment(lib,"d3d12.lib")	
-#pragma comment(lib,"dxgi.lib")		
-#pragma comment(lib,"dxguid.lib")	
-#pragma comment(lib,"d3dcompiler.lib")
-
-using namespace Microsoft;
-using namespace Microsoft::WRL;
-using namespace DirectX;
 
 // DX12 ÒýÇæ
 class DX12Engine
@@ -48,57 +38,76 @@ private:
 	UINT64 FenceValue = 0;								
 	HANDLE RenderEvent = NULL;							
 	D3D12_RESOURCE_BARRIER beg_barrier = {};		
-	D3D12_RESOURCE_BARRIER end_barrier = {};			
+	D3D12_RESOURCE_BARRIER end_barrier = {};	
 
-	ComPtr<ID3D12RootSignature> m_RootSignature;		
-	ComPtr<ID3D12PipelineState> m_PipelineStateObject;
+	ComPtr<ID3D12DescriptorHeap> m_DSVHeap;					
+	D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle;					
+	ComPtr<ID3D12Resource> m_DepthStencilBuffer;		
+	DXGI_FORMAT DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	ComPtr<ID3D12Resource> m_VertexResource;			
-	struct VERTEX										
+	ModelManager m_ModelManager;
+
+	ComPtr<IWICImagingFactory> m_WICFactory;				
+	ComPtr<IWICBitmapDecoder> m_WICBitmapDecoder;			
+	ComPtr<IWICBitmapFrameDecode> m_WICBitmapDecodeFrame;	
+	ComPtr<IWICFormatConverter> m_WICFormatConverter;		
+	ComPtr<IWICBitmapSource> m_WICBitmapSource;				
+	UINT TextureWidth = 0;									
+	UINT TextureHeight = 0;									
+	UINT BitsPerPixel = 0;									
+	UINT BytePerRowSize = 0;								
+	DXGI_FORMAT TextureFormat = DXGI_FORMAT_UNKNOWN;		
+
+	ComPtr<ID3D12DescriptorHeap> m_SRVHeap;					
+	
+	UINT TextureSize = 0;									
+	UINT UploadResourceRowSize = 0;							
+	UINT UploadResourceSize = 0;		
+
+	ComPtr<ID3D12Resource> m_CBVResource;		
+	struct CBuffer								
 	{
-		XMFLOAT4 position;								
-		XMFLOAT4 color;									
+		XMFLOAT4X4 VPMatrix;	
 	};
-	D3D12_VERTEX_BUFFER_VIEW VertexBufferView;			
+	CBuffer* VPBuffer = nullptr;
+
+	Camera m_FirstCamera;
+
+	ComPtr<ID3D12RootSignature> m_RootSignature;
+	ComPtr<ID3D12PipelineState> m_PipelineStateObject;
 
 	D3D12_VIEWPORT viewPort = D3D12_VIEWPORT{ 0, 0, float(WindowWidth), float(WindowHeight), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
 	D3D12_RECT ScissorRect = D3D12_RECT{ 0, 0, WindowWidth, WindowHeight };
 
-public:
-	static LRESULT CALLBACK CallBackFunc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (msg)
-		{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		default: return DefWindowProc(hwnd, msg, wParam, lParam);
-		}
+private:
+	LRESULT CALLBACK CallBackFunc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-		return 0;
-	}
+	void CreateSRVHeap();
+	void StartCommandRecord();
+	bool LoadTextureFromFile(std::wstring TextureFilename);
+	void CreateUploadAndDefaultResource(ModelManager::TEXTURE_MAP_INFO& Info);
+	void CopyTextureDataToDefaultResource(ModelManager::TEXTURE_MAP_INFO& Info);
+	void CreateSRV(ModelManager::TEXTURE_MAP_INFO& Info,
+		D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void StartCommandExecute();
+
+public:
 
 	void InitWindow(HINSTANCE hins);
 	bool InitDX12();
 
+
+	void CreateModelTextureResource();
+	void CreateModelVertexAndIndexResource();
+
+	void CreateCBVResource();
+
 	void CreateRootSignature();
 	void CreatePSO();
-	void CreateVertexResource();
 
+	void UpdateConstantBuffer();
 	void Render();
 	void RenderLoop();
 
-	static void Run(HINSTANCE hins)
-	{
-		DX12Engine engine;
-		engine.InitWindow(hins);
-		if (!engine.InitDX12())
-			return ;
-
-		engine.CreateRootSignature();
-		engine.CreatePSO();
-		engine.CreateVertexResource();
-
-		engine.RenderLoop();
-	}
+	static void Run(HINSTANCE hins);
 };
